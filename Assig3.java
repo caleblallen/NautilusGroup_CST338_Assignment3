@@ -1,80 +1,91 @@
-/*
- * The Nautilus Group - Write a Java program: Decks of Cards
- * 
- * Team Members: Caleb Allen, Daisy Mayorga, David Harrison, 
- *               Dustin Whittington, & Michael Cline
- */
+/* ---------------------------------------------------------------------------------------------------------------- 
+Nautilus Group
+Caleb Allen
+Daisy Mayorga
+David Harrison
+Dustin Whittington
+Michael Cline
+CST 338
+M3: Deck of Cards Java Program
+16 May 2017
+
+PURPOSE:
+We endeavor to set up some classes that can be used in future programs that involve playing card games with a human,
+or simulating card games entirely by a computer.  This includes: class Card, class Hand, and class Deck.
+
+OVERVIEW:
+
+----------------------------------------------------------------------------------------------------------------- */
 
 public class Assig3
 {
-
    public static void main(String[] args)
    {
-      // TODO Auto-generated method stub
 
    }
-
 }
 
 class Card
 {
-   //Enumerator for the Card's suit
-   enum Suit { clubs, diamonds, hearts, spades };
+   //Enumerator for the card's suit
+   public enum Suit { clubs, diamonds, hearts, spades };
    
    private char value;
    private Suit suit;
    private boolean errorFlag;
    
+   //Default constructor for card overloaded to return A of spades
+   public Card()
+   {
+      this.value = 'A';
+      this.suit = Suit.spades;
+   }
+   
+   //Parameterized constructor for card that accepts value and suit
    public Card(char value, Suit suit)
    {
-      /*
-       * The constructor should call the proper mutator(s).  
-       * Overload this to cope with a client that wants to instantiate 
-       * without parameters and use 'A' and 'spades' as the default 
-       * value and suit when not supplied.  Provide at least two 
-       * constructors -- no parameters and all parameters -- or more 
-       * if you wish.  Because we have the errorFlag member, the 
-       * constuctor (via the mutator), can set that member when it gets 
-       * bad data; it does not have to assign default values upon 
-       * receipt of bad data.  This is a new technique for us.  
-       * Again, default card (no parameters passed) is the ('A', spades).
-       */
-      this.value = value;
-      this.suit = suit;
+      set(value, suit);
    }
    
+   //Parameterized constructor for card that accepts value, suit, and errorFlag
+   public Card(char value, Suit suit, boolean errorFlag)
+   {
+      set(value, suit);
+      this.errorFlag = errorFlag;
+   }
+   
+   //If error flag is false, returns value and suit of card in a single string, otherwise returns invalid
    public String toString()
    {
-      /*
-       * a stringizer that the client can use prior to 
-       * displaying the card.  It provides a clean 
-       * representation of the card.  If errorFlag == true, 
-       * it should return correspondingly reasonable 
-       * reflection of this fact (something like "[ invalid ]" 
-       * rather than a suit and value).
-       */
-      return this.value + " of " + this.suit;
+      if (errorFlag == false)
+      {
+         return this.value + " of " + this.suit;
+      }
+      else
+      {
+         return "[ invalid ]";
+      }
    }
    
+   //Mutator to set value and suit for a card
    public boolean set(char value, Suit suit)
    {
-      /*
-       * a mutator that accepts the legal values 
-       * established in the earlier section.  When 
-       * bad values are passed, errorFlag is set to 
-       * true and other values can be left in any state 
-       * (even partially set). If good values are passed, 
-       * they are stored and errorFlag is set to false.  
-       * Make use of the private helper, listed below.
-       */
-      return false;
+      if (isValid(value, suit))
+      {
+         this.value = value;
+         this.suit = suit;
+         this.errorFlag = false;
+         return true;
+      }
+      else
+      {
+         this.errorFlag = true;
+         return false;
+      }
    }
    
    public Suit getSuit()
    {
-      /*
-       * Accessor for Suit
-       */
       return this.suit;
    }
    
@@ -235,25 +246,26 @@ class Hand
        *  Valid k: 0 <= k < numCards
        */
       
-      //return card if k is valid.
-      if(k >= 0 && k < numCards)
+      //Returns card if k is valid
+      if (0 <= k && k < numCards)
       {
          return myCards[k];
       }
       else
       {
-         //Returns invalid card if k is bad.
+         //Returns invalid card if k is bad
          return new Card('#',Card.Suit.clubs);
       }
-   }
-   
-   
+   } 
 }
 
 class Deck
 {
-   public final int MAX_CARDS = 6*52;
+   //Sets maximum number of cards to be played which is 6 decks (6 * 52 = 312)
+   public final static int MAX_CARDS = 312;
    
+   //This is a private static Card array containing exactly 52 card references, which point to all the standard cards
+   //Avoids repeatedly declaring the same 52 cards as game play continues
    private static Card[] masterPack;
    
    private Card[] cards;
@@ -305,21 +317,24 @@ class Deck
       return null;
    }
    
+   //Accessor to return array index of top card
+   //This value also tells us how many total cards are currently in the array
    public int getTopCard()
    {
-      /*
-       * An accessor for the int, topCard (no mutator.)
-       */
-      return 0;
+      return this.topCard;
    }
    
+   //Method to test that the index of the card is legal
    public Card inspectCard(int k)
    {
-      /*
-       * Accessor for an individual card.  
-       * Returns a card with errorFlag = true if k is bad.
-       */
-      return null;
+      if(k >= 0 && k <= topCard)
+      {
+         return cards[k];
+      }
+      else
+      {
+         return new Card('Q', Card.Suit.hearts, true);
+      } 
    }
    
    private static void allocateMasterPack()
@@ -342,3 +357,4 @@ class Deck
    }
    
 }
+
