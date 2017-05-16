@@ -36,7 +36,7 @@ public class Assig3
       Deck deck = new Deck(1);
       Hand[] hands = new Hand[players];
 
-      // Initialize a hand object for each player
+      //Initialize a hand object for each player
       for (int x = 0; x < players; x++)
       {
          hands[x] = new Hand();
@@ -47,7 +47,7 @@ public class Assig3
       {
          for (Hand hand : hands)
          {
-            //make sure there is still a card to deal
+            //Make sure there is still a card to deal
             if (deck.getTopCard() > 0)
             {
                hand.takeCard(deck.dealCard());
@@ -68,10 +68,10 @@ public class Assig3
          hand.resetHand();
       }
 
-      //put 52 cards back into deck object
+      //Put 52 cards back into deck object
       deck.init(1);
 
-      //shuffle deck
+      //Shuffle deck
       deck.shuffle();
 
       //Deal all cards to players
@@ -79,7 +79,7 @@ public class Assig3
       {
          for (Hand hand : hands)
          {
-            //make sure there is still a card to deal
+            //Make sure there is still a card to deal
             if (deck.getTopCard() > 0)
             {
                hand.takeCard(deck.dealCard());
@@ -93,47 +93,47 @@ public class Assig3
       {
          System.out.println(hand);
       }
-      //close Scanner input
+      //Close Scanner input
       input.close();
    }
-   
 }
 
 class Card
 {
-   // Enumerator for the card's suit
+   //Enumerator for the card's suit
    public enum Suit
    {
       clubs, diamonds, hearts, spades
    };
 
+   //Private instance variables
    private char value;
    private Suit suit;
    private boolean errorFlag;
 
-   // Default constructor for card overloaded to return A of spades
+   //Default constructor for card overloaded to return A of spades
    public Card()
    {
       this.value = 'A';
       this.suit = Suit.spades;
    }
 
-   // Parameterized constructor for card that accepts value and suit
+   //Parameterized constructor for card that accepts value and suit
    public Card(char value, Suit suit)
    {
       set(value, suit);
    }
 
-   // Parameterized constructor for card that accepts value, suit, and
-   // errorFlag
+   //Parameterized constructor for card that accepts value, suit,
+   //and errorFlag
    public Card(char value, Suit suit, boolean errorFlag)
    {
       set(value, suit);
       this.errorFlag = errorFlag;
    }
 
-   // If error flag is false, returns value and suit of card in a single
-   // string, otherwise returns invalid
+   //If error flag is false, returns value and suit of card in a single
+   //string, otherwise returns invalid
    public String toString()
    {
       if (errorFlag == false)
@@ -146,7 +146,7 @@ class Card
       }
    }
 
-   // Mutator to set value and suit for a card
+   //Mutator to set value and suit for a card
    public boolean set(char value, Suit suit)
    {
       if (isValid(value, suit))
@@ -163,6 +163,7 @@ class Card
       }
    }
 
+   //Accessor for card suit
    public Suit getSuit()
    {
       return this.suit;
@@ -201,24 +202,26 @@ class Card
       return false;
    }
 
+   //method that returns true if all members are equal, false otherwise
    public boolean equals(Card card)
    {
-
       if (card == this)
       {
          return true;
       }
-
-      //return true if all members are equal, false otherwise.
-      return (card.getValue() == this.getValue()) &&
-            (card.getSuit().equals(this.getSuit())) &&
-            (card.getErrorFlag() == this.getErrorFlag());
+      else
+      {
+         return (card.getValue() == this.getValue()) &&
+               (card.getSuit().equals(this.getSuit())) &&
+               (card.getErrorFlag() == this.getErrorFlag());
+      }
    }
 }
 
 class Hand
 {
-   public final int MAX_CARDS = 50;
+   //Safeguard to prevent a runaway program from creating a monster array
+   public final static int MAX_CARDS = 50;
 
    private Card[] myCards;
    private int numCards;
@@ -238,10 +241,10 @@ class Hand
        * remove all cards from the hand (in the simplest way).
        */
 
-      // Remove all reference to the old hand.
+      //Remove all reference to the old hand.
       this.myCards = new Card[MAX_CARDS];
 
-      // Reset the card counter.
+      //Reset the card counter.
       this.numCards = 0;
    }
 
@@ -254,10 +257,10 @@ class Hand
        * our local data to be exactly as it was when we received it.
        */
 
-      // Make sure we're not above our hand size limit.
+      //Make sure we're not above our hand size limit.
       if (numCards < MAX_CARDS)
       {
-         // Create a copy of the taken card and advance the card counter.
+         //Create a copy of the taken card and advance the card counter.
          myCards[numCards++] = new Card(card.getValue(), card.getSuit());
 
          return true;
@@ -276,17 +279,17 @@ class Hand
        */
       if (numCards > 0)
       {
-         // Make a copy of the card in the myCards array.
+         //Make a copy of the card in the myCards array.
          Card playedCard = new Card(myCards[numCards - 1].getValue(), myCards[numCards - 1].getSuit());
 
-         // Decrement card counter. Remove the topmost card from the array.
+         //Decrement card counter. Remove the topmost card from the array.
          myCards[--numCards] = null;
 
          return playedCard;
       }
       else
       {
-         // returns an invalid card to be consistent with inspectCard()
+         //Returns an invalid card to be consistent with inspectCard()
          return new Card('#', Card.Suit.clubs);
       }
    }
@@ -295,15 +298,15 @@ class Hand
    {
       /*
        * a stringizer that the client can use prior to displaying the entire
-       * hand.
+       * hand
        */
       String output = "( ";
       for (int i = 0; i < numCards; i++)
       {
-         // print the card.
+         //print the card.
          output += this.myCards[i].toString();
 
-         // add a comma to every card except the last.
+         //add a comma to every card except the last.
          if (i + 1 < numCards)
          {
             output += ", ";
@@ -346,12 +349,12 @@ class Hand
 
 class Deck
 {
-   // Sets maximum number of cards to be played which is 6 decks (6 * 52 = 312)
+   //Sets maximum number of cards to be played which is 6 decks (6 * 52 = 312)
    public final static int MAX_CARDS = 312;
 
-   // This is a private static Card array containing exactly 52 card
-   // references, which point to all the standard cards
-   // Avoids repeatedly declaring the same 52 cards as game play continues
+   //This is a private static Card array containing exactly 52 card
+   //references, which point to all the standard cards
+   //Avoids repeatedly declaring the same 52 cards as game play continues
    private static Card[] masterPack;
 
    /*
@@ -366,34 +369,34 @@ class Deck
 
    public Deck(int numPacks)
    {
-      // Over loaded deck method so a user can request the number of decks to
-      // use.
+      //Over loaded deck method so a user can request the number of decks to
+      //use.
       init(numPacks);
    }
 
    public Deck()
    {
-      // Calls init to build a deck
+      //Calls init to build a deck
       numPacks = 1;
       init(numPacks);
    }
 
    public void init(int numPacks)
    {
-      // Ensures the deck is not more than the maximum size.
+      //Ensures the deck is not more than the maximum size.
       if (numPacks > 6)
       {
          numPacks = 6;
       }
-      // Initializes the pointer and cards array based on the requested number
-      // of packs.
+      //Initializes the pointer and cards array based on the requested number
+      //of packs.
       topCard = numPacks * 52;
       cards = new Card[topCard];
-      // Calls allocateMasterPack to make sure the master pack has been
-      // created.
+      //Calls allocateMasterPack to make sure the master pack has been
+      //created.
       allocateMasterPack();
-      // Uses arraycopy to copy the number of requested packs from masterPack
-      // into cards.
+      //Uses arraycopy to copy the number of requested packs from masterPack
+      //into cards.
       for (int count = 0; numPacks > count; count++)
       {
          System.arraycopy(masterPack, 0, cards, 52 * count, 52);
@@ -405,7 +408,7 @@ class Deck
       int randomNumber;
       Card copy;
       Random generator = new Random();
-      // Applies the Fisher-Yates shuffle algorithm to the cards array.
+      //Applies the Fisher-Yates shuffle algorithm to the cards array.
       for (int deckCount = topCard - 1; deckCount > 0; deckCount--)
       {
          randomNumber = generator.nextInt(deckCount + 1);
@@ -417,22 +420,22 @@ class Deck
 
    public Card dealCard()
    {
-      // Removes the top card from the deck before reducing top card.
+      //Removes the top card from the deck before reducing top card.
       Card card = cards[topCard - 1];
       cards[topCard - 1] = null;
       topCard--;
-      // The top card is returned
+      //The top card is returned
       return card;
    }
 
-   // Accessor to return array index of top card
-   // This value also tells us how many total cards are currently in the array
+   //Accessor to return array index of top card
+   //This value also tells us how many total cards are currently in the array
    public int getTopCard()
    {
       return this.topCard;
    }
 
-   // Method to test that the index of the card is legal
+   //Method to test that the index of the card is legal
    public Card inspectCard(int k)
    {
 
@@ -448,13 +451,13 @@ class Deck
 
    private static void allocateMasterPack()
    {
-      // Check if master pack has already been created by previous deck
-      // objects
+      //Check if master pack has already been created by previous deck
+      //objects
       if (!masterPackCreated)
       {
-         // initialize card array
+         //initialize card array
          masterPack = new Card[52];
-         // Create all 52 Card objects for master pack
+         //Create all 52 Card objects for master pack
          masterPack[0] = new Card('A', Card.Suit.clubs);
          masterPack[1] = new Card('A', Card.Suit.diamonds);
          masterPack[2] = new Card('A', Card.Suit.hearts);
@@ -516,25 +519,34 @@ class Deck
    }
 }
 
-/***************************OUTPUT 1*****************************************
+/***************************OUTPUT 1 ~ Using 1 Deck*****************************************
 How many hands? (1 - 10, please)
 5
 Here are our hands, from unshuffled deck:
-( K of spades, Q of hearts, J of diamonds, T of clubs, 8 of spades, 7 of hearts, 6 of diamonds, 5 of clubs, 3 of spades, 2 of hearts, A of diamonds )
-( K of hearts, Q of diamonds, J of clubs, 9 of spades, 8 of hearts, 7 of diamonds, 6 of clubs, 4 of spades, 3 of hearts, 2 of diamonds, A of clubs )
-( K of diamonds, Q of clubs, T of spades, 9 of hearts, 8 of diamonds, 7 of clubs, 5 of spades, 4 of hearts, 3 of diamonds, 2 of clubs )
-( K of clubs, J of spades, T of hearts, 9 of diamonds, 8 of clubs, 6 of spades, 5 of hearts, 4 of diamonds, 3 of clubs, A of spades )
-( Q of spades, J of hearts, T of diamonds, 9 of clubs, 7 of spades, 6 of hearts, 5 of diamonds, 4 of clubs, 2 of spades, A of hearts )
+( K of spades, Q of hearts, J of diamonds, T of clubs, 8 of spades, 7 of hearts, 6 of diamonds, 5 of clubs,
+3 of spades, 2 of hearts, A of diamonds )
+( K of hearts, Q of diamonds, J of clubs, 9 of spades, 8 of hearts, 7 of diamonds, 6 of clubs, 4 of spades,
+3 of hearts, 2 of diamonds, A of clubs )
+( K of diamonds, Q of clubs, T of spades, 9 of hearts, 8 of diamonds, 7 of clubs, 5 of spades, 4 of hearts,
+3 of diamonds, 2 of clubs )
+( K of clubs, J of spades, T of hearts, 9 of diamonds, 8 of clubs, 6 of spades, 5 of hearts, 4 of diamonds,
+3 of clubs, A of spades )
+( Q of spades, J of hearts, T of diamonds, 9 of clubs, 7 of spades, 6 of hearts, 5 of diamonds, 4 of clubs,
+2 of spades, A of hearts )
 Here are our hands, from SHUFFLED deck:
-( 2 of diamonds, 5 of hearts, 2 of hearts, 4 of spades, 5 of clubs, 8 of clubs, Q of spades, 7 of hearts, 7 of spades, J of clubs, 5 of diamonds )
-( 2 of spades, T of diamonds, K of diamonds, 8 of diamonds, K of spades, 8 of spades, T of spades, 2 of clubs, A of diamonds, T of clubs, Q of clubs )
-( J of hearts, Q of hearts, 4 of hearts, 5 of spades, 4 of diamonds, K of hearts, Q of diamonds, 7 of diamonds, 6 of clubs, J of spades )
-( 9 of spades, 6 of spades, 3 of hearts, 6 of diamonds, J of diamonds, 3 of clubs, 6 of hearts, 9 of hearts, 8 of hearts, A of clubs )
-( T of hearts, 3 of diamonds, 9 of clubs, 7 of clubs, 9 of diamonds, 3 of spades, A of hearts, K of clubs, 4 of clubs, A of spades )
+( 2 of diamonds, 5 of hearts, 2 of hearts, 4 of spades, 5 of clubs, 8 of clubs, Q of spades, 7 of hearts, 7 of spades,
+J of clubs, 5 of diamonds )
+( 2 of spades, T of diamonds, K of diamonds, 8 of diamonds, K of spades, 8 of spades, T of spades, 2 of clubs,
+A of diamonds, T of clubs, Q of clubs )
+( J of hearts, Q of hearts, 4 of hearts, 5 of spades, 4 of diamonds, K of hearts, Q of diamonds, 7 of diamonds,
+6 of clubs, J of spades )
+( 9 of spades, 6 of spades, 3 of hearts, 6 of diamonds, J of diamonds, 3 of clubs, 6 of hearts, 9 of hearts,
+8 of hearts, A of clubs )
+( T of hearts, 3 of diamonds, 9 of clubs, 7 of clubs, 9 of diamonds, 3 of spades, A of hearts, K of clubs, 4 of clubs,
+A of spades )
  ****************************************************************************/
 
-
-/***************************OUTPUT 2*****************************************
+/***************************OUTPUT 2 ~ Using 1 Deck**************************
 How many hands? (1 - 10, please)
 0
 Please enter a legal value of players between 1 and 10
@@ -559,4 +571,83 @@ Here are our hands, from SHUFFLED deck:
 ( T of diamonds, 7 of clubs, 6 of diamonds, 7 of diamonds, 9 of spades, Q of diamonds )
 ( 4 of hearts, 3 of clubs, A of spades, T of spades, 5 of hearts, A of diamonds )
 ( 6 of hearts, 2 of spades, 8 of diamonds, 2 of clubs, 5 of diamonds, K of clubs )
+ ****************************************************************************/
+
+/***************************OUTPUT 3 ~ Using 2 Decks*************************
+How many hands? (1 - 10, please)
+4
+Here are our hands, from unshuffled deck:
+( K of spades, Q of spades, J of spades, T of spades, 9 of spades, 8 of spades, 7 of spades, 6 of spades, 5 of spades,
+4 of spades, 3 of spades, 2 of spades, A of spades, K of spades, Q of spades, J of spades, T of spades, 9 of spades,
+8 of spades, 7 of spades, 6 of spades, 5 of spades, 4 of spades, 3 of spades, 2 of spades, A of spades )
+( K of hearts, Q of hearts, J of hearts, T of hearts, 9 of hearts, 8 of hearts, 7 of hearts, 6 of hearts, 5 of hearts,
+4 of hearts, 3 of hearts, 2 of hearts, A of hearts, K of hearts, Q of hearts, J of hearts, T of hearts, 9 of hearts,
+8 of hearts, 7 of hearts, 6 of hearts, 5 of hearts, 4 of hearts, 3 of hearts, 2 of hearts, A of hearts )
+( K of diamonds, Q of diamonds, J of diamonds, T of diamonds, 9 of diamonds, 8 of diamonds, 7 of diamonds,
+6 of diamonds, 5 of diamonds, 4 of diamonds, 3 of diamonds, 2 of diamonds, A of diamonds, K of diamonds, Q of diamonds,
+J of diamonds, T of diamonds, 9 of diamonds, 8 of diamonds, 7 of diamonds, 6 of diamonds, 5 of diamonds, 4 of diamonds,
+3 of diamonds, 2 of diamonds, A of diamonds )
+( K of clubs, Q of clubs, J of clubs, T of clubs, 9 of clubs, 8 of clubs, 7 of clubs, 6 of clubs, 5 of clubs,
+4 of clubs, 3 of clubs, 2 of clubs, A of clubs, K of clubs, Q of clubs, J of clubs, T of clubs, 9 of clubs, 8 of clubs,
+7 of clubs, 6 of clubs, 5 of clubs, 4 of clubs, 3 of clubs, 2 of clubs, A of clubs )
+Here are our hands, from SHUFFLED deck:
+( 4 of clubs, K of hearts, 7 of hearts, 6 of clubs, 8 of diamonds, 3 of spades, A of diamonds, 2 of diamonds,
+T of spades, K of hearts, 3 of hearts, 6 of spades, 6 of hearts, A of diamonds, 8 of clubs, Q of hearts, 9 of diamonds,
+2 of clubs, T of clubs, A of clubs, 6 of clubs, 8 of hearts, 4 of hearts, 9 of diamonds, 9 of hearts, 5 of spades )
+( 9 of clubs, 4 of spades, 5 of clubs, 7 of hearts, 5 of diamonds, 2 of diamonds, 4 of spades, J of clubs, J of spades,
+7 of spades, T of diamonds, 5 of diamonds, J of hearts, 4 of diamonds, T of hearts, J of clubs, 3 of hearts,
+9 of spades, Q of diamonds, K of diamonds, 7 of clubs, 4 of hearts, 2 of spades, K of spades, 8 of spades,
+7 of diamonds )
+( 4 of diamonds, T of clubs, 7 of spades, 7 of clubs, 3 of diamonds, K of clubs, A of spades, 6 of diamonds,
+9 of spades, 2 of hearts, Q of spades, A of spades, Q of spades, 2 of hearts, 5 of spades, A of hearts, Q of clubs,
+3 of diamonds, Q of hearts, 8 of diamonds, 5 of clubs, 5 of hearts, T of hearts, 4 of clubs, K of spades, 9 of hearts )
+( 3 of spades, 2 of clubs, J of hearts, 6 of hearts, 5 of hearts, 3 of clubs, 6 of spades, K of diamonds,
+6 of diamonds, T of spades, J of spades, 7 of diamonds, 8 of spades, 8 of hearts, A of clubs, Q of clubs, 8 of clubs,
+2 of spades, 9 of clubs, Q of diamonds, J of diamonds, T of diamonds, 3 of clubs, K of clubs, A of hearts,
+J of diamonds )
+ ****************************************************************************/
+
+/***************************OUTPUT 4 ~ Using 2 Decks*************************
+How many hands? (1 - 10, please)
+-4
+Please enter a legal value of players between 1 and 10
+10000
+Please enter a legal value of players between 1 and 10
+0
+Please enter a legal value of players between 1 and 10
+8
+Here are our hands, from unshuffled deck:
+( K of spades, J of spades, 9 of spades, 7 of spades, 5 of spades, 3 of spades, A of spades, Q of spades, T of spades,
+8 of spades, 6 of spades, 4 of spades, 2 of spades )
+( K of hearts, J of hearts, 9 of hearts, 7 of hearts, 5 of hearts, 3 of hearts, A of hearts, Q of hearts, T of hearts,
+8 of hearts, 6 of hearts, 4 of hearts, 2 of hearts )
+( K of diamonds, J of diamonds, 9 of diamonds, 7 of diamonds, 5 of diamonds, 3 of diamonds, A of diamonds,
+Q of diamonds, T of diamonds, 8 of diamonds, 6 of diamonds, 4 of diamonds, 2 of diamonds )
+( K of clubs, J of clubs, 9 of clubs, 7 of clubs, 5 of clubs, 3 of clubs, A of clubs, Q of clubs, T of clubs,
+8 of clubs, 6 of clubs, 4 of clubs, 2 of clubs )
+( Q of spades, T of spades, 8 of spades, 6 of spades, 4 of spades, 2 of spades, K of spades, J of spades, 9 of spades,
+7 of spades, 5 of spades, 3 of spades, A of spades )
+( Q of hearts, T of hearts, 8 of hearts, 6 of hearts, 4 of hearts, 2 of hearts, K of hearts, J of hearts, 9 of hearts,
+7 of hearts, 5 of hearts, 3 of hearts, A of hearts )
+( Q of diamonds, T of diamonds, 8 of diamonds, 6 of diamonds, 4 of diamonds, 2 of diamonds, K of diamonds,
+J of diamonds, 9 of diamonds, 7 of diamonds, 5 of diamonds, 3 of diamonds, A of diamonds )
+( Q of clubs, T of clubs, 8 of clubs, 6 of clubs, 4 of clubs, 2 of clubs, K of clubs, J of clubs, 9 of clubs,
+7 of clubs, 5 of clubs, 3 of clubs, A of clubs )
+Here are our hands, from SHUFFLED deck:
+( T of clubs, K of diamonds, 4 of diamonds, 4 of hearts, T of diamonds, J of hearts, 8 of hearts, A of clubs,
+A of diamonds, A of spades, 7 of clubs, J of diamonds, 7 of clubs )
+( 6 of clubs, 3 of clubs, 9 of spades, 3 of hearts, 5 of diamonds, 8 of hearts, J of diamonds, 8 of spades,
+A of spades, 7 of hearts, J of clubs, Q of clubs, 6 of hearts )
+( 3 of spades, 5 of hearts, 8 of clubs, 7 of hearts, 9 of hearts, 2 of spades, 5 of spades, K of spades,
+8 of diamonds, T of spades, 9 of clubs, 3 of spades, 9 of spades )
+( Q of diamonds, Q of spades, 8 of clubs, 4 of clubs, K of spades, K of clubs, J of spades, 4 of clubs, A of hearts,
+A of hearts, Q of diamonds, J of spades, 2 of clubs )
+( 2 of hearts, J of clubs, J of hearts, 4 of spades, 6 of diamonds, K of diamonds, T of clubs, 2 of diamonds,
+T of hearts, 5 of clubs, 4 of diamonds, 3 of clubs, Q of clubs )
+( 8 of spades, 2 of clubs, 3 of hearts, 9 of diamonds, 2 of hearts, 9 of hearts, 7 of diamonds, K of clubs,
+Q of hearts, 8 of diamonds, 9 of clubs, T of diamonds, 7 of spades )
+( 4 of hearts, 9 of diamonds, 6 of clubs, T of spades, 2 of spades, K of hearts, 5 of diamonds, 6 of diamonds,
+6 of hearts, K of hearts, Q of hearts, 2 of diamonds, A of diamonds )
+( 7 of diamonds, 5 of hearts, 7 of spades, 3 of diamonds, 6 of spades, 4 of spades, T of hearts, 5 of clubs,
+3 of diamonds, 6 of spades, A of clubs, Q of spades, 5 of spades )
  ****************************************************************************/
