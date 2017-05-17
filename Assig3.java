@@ -19,6 +19,7 @@ or simulating card games entirely by a computer.  This includes: class Card, cla
 
 public class Assig3
 {
+   
    public static void main(String[] args) 
    {
       int players;
@@ -96,6 +97,7 @@ public class Assig3
       //Close Scanner input
       input.close();
    }
+
 }
 
 class Card
@@ -196,8 +198,12 @@ class Card
        */
       char[] cardType = { 'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K' };
       for (int i = 0; i < cardType.length; i++)
+      {
          if (value == cardType[i])
+         {
             return true;
+         }
+      }
 
       return false;
    }
@@ -290,7 +296,7 @@ class Hand
       else
       {
          //Returns an invalid card to be consistent with inspectCard()
-         return new Card('#', Card.Suit.clubs);
+         return new Card('Q', Card.Suit.hearts, true);
       }
    }
 
@@ -342,7 +348,7 @@ class Hand
       else
       {
          // Returns invalid card if k is bad
-         return new Card('#', Card.Suit.clubs);
+         return new Card('Q', Card.Suit.hearts, true);
       }
    }
 }
@@ -420,12 +426,19 @@ class Deck
 
    public Card dealCard()
    {
-      //Removes the top card from the deck before reducing top card.
-      Card card = cards[topCard - 1];
-      cards[topCard - 1] = null;
-      topCard--;
-      //The top card is returned
-      return card;
+      if(topCard < 0 || topCard > numPacks*52)
+      {
+         return null;
+      }
+      else
+      {
+         //Removes the top card from the deck before reducing top card.
+         Card card = cards[topCard - 1];
+         cards[topCard - 1] = null;
+         topCard--;
+         //The top card is returned 
+         return card;
+      }
    }
 
    //Accessor to return array index of top card
