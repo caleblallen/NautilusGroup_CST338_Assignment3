@@ -97,7 +97,6 @@ public class Assig3
       //Close Scanner input
       input.close();
    }
-
 }
 
 class Card
@@ -204,7 +203,6 @@ class Card
             return true;
          }
       }
-
       return false;
    }
 
@@ -229,6 +227,7 @@ class Hand
    //Safeguard to prevent a runaway program from creating a monster array
    public final static int MAX_CARDS = 50;
 
+   //private data members
    private Card[] myCards;
    private int numCards;
 
@@ -268,7 +267,6 @@ class Hand
       {
          //Create a copy of the taken card and advance the card counter.
          myCards[numCards++] = new Card(card.getValue(), card.getSuit());
-
          return true;
       }
       else
@@ -290,7 +288,6 @@ class Hand
 
          //Decrement card counter. Remove the topmost card from the array.
          myCards[--numCards] = null;
-
          return playedCard;
       }
       else
@@ -326,7 +323,6 @@ class Hand
       /*
        * Accessor for numCards
        */
-
       return this.numCards;
    }
 
@@ -338,7 +334,6 @@ class Hand
        * 
        * Valid k: 0 <= k < numCards
        */
-
 
       // Returns card if k is valid
       if (0 <= k && k < numCards)
@@ -369,6 +364,7 @@ class Deck
     */
    private static boolean masterPackCreated = false;
 
+   //private data members
    private Card[] cards;
    private int topCard;
    private int numPacks = 1;
