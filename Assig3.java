@@ -77,6 +77,7 @@ public class Assig3
 
       //Deal all cards to players
       while (deck.getTopCard() > 0)
+
       {
          for (Hand hand : hands)
          {
@@ -428,7 +429,9 @@ class Deck
    {
       if(topCard < 0 || topCard > numPacks*52)
       {
+
          return new Card('Q', Card.Suit.hearts, true);
+
       }
       else
       {
