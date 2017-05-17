@@ -1,3 +1,5 @@
+import java.util.Random;
+import java.util.Scanner;
 /* ---------------------------------------------------------------------------------------------------------------- 
 Nautilus Group
 Caleb Allen
@@ -13,217 +15,87 @@ PURPOSE:
 We endeavor to set up some classes that can be used in future programs that involve playing card games with a human,
 or simulating card games entirely by a computer.  This includes: class Card, class Hand, and class Deck.
 
-OVERVIEW:
-
 ----------------------------------------------------------------------------------------------------------------- */
 
 public class Assig3
 {
-   public static void main(String[] args)
+   
+   public static void main(String[] args) 
    {
-      
-      testCardClass();
-      testHandClass();
-   }
+      int players;
+      Scanner input = new Scanner(System.in);
+      System.out.println("How many hands? (1 - 10, please)");
+      players = input.nextInt();
 
-   public static void testCardClass()
-   {
-      String results = "";
-      Card cardClassCard1 = new Card('A', Card.Suit.spades);
-      Card cardClassCard2 = new Card('f', Card.Suit.hearts);
-      Card cardClassCard3 = new Card('J', Card.Suit.clubs);
-
-      results += expectedResult(cardClassCard1.toString(),"A of spades","Card 1 (ace of spades)");
-      results += expectedResult(cardClassCard2.toString(),"[ invalid ]","Card 2 (invalid)");
-      results += expectedResult(cardClassCard3.toString(),"J of clubs","Card 3 (jack of spades)");
-      //System.out.println(cardClassCard1.toString());
-      //System.out.println(cardClassCard2.toString());
-      //System.out.println(cardClassCard3.toString());
-      //System.out.println("");
-
-      cardClassCard1.set('f', Card.Suit.clubs);
-      cardClassCard2.set('Q', Card.Suit.spades);
-
-      results += expectedResult(cardClassCard1.getErrorFlag(),true,"Set card 1 to invalid");
-      results += expectedResult(cardClassCard2.getErrorFlag(),false,"Set card 2 to valid");
-      results += expectedResult(cardClassCard1.toString(),"[ invalid ]","Card 1 (invalid)");
-      results += expectedResult(cardClassCard2.toString(),"Q of spades","Card 2 (queen of spades)");
-      //System.out.println(cardClassCard1.toString());
-      //System.out.println(cardClassCard2.toString());
-      //System.out.println(cardClassCard3.toString());
-      if(results.indexOf("false") < 0)
+      //Make sure user has entered a legal number of players
+      while (players < 1 || players > 10)
       {
-         System.out.println("\n------------\nThe Card class has passed all tests!\n------------\n");
+         System.out.println("Please enter a legal value of players between 1 and 10");
+         players = input.nextInt();
       }
-      else
+
+      Deck deck = new Deck(1);
+      Hand[] hands = new Hand[players];
+
+      //Initialize a hand object for each player
+      for (int x = 0; x < players; x++)
       {
-         System.out.println("\n------------\nFAILED! The Card class has failed one or more tests!\n------------\n");
+         hands[x] = new Hand();
       }
-   }
 
-   //Driver function for Hand Class tests.
-   public static void testHandClass()
-   {
-      String results = "";
-      Hand pokerHand = new Hand();
-      pokerHand.takeCard(new Card('A',Card.Suit.spades));
-      results += expectedResult(pokerHand.inspectCard(0).toString(),"A of spades","Add and Inspect First Card");
-      pokerHand.takeCard(new Card('Q',Card.Suit.hearts));
-      results += expectedResult(pokerHand.inspectCard(1).toString(),"Q of hearts","Add and Inspect Second Card");
-      pokerHand.takeCard(new Card('J',Card.Suit.diamonds));
-      results += expectedResult(pokerHand.inspectCard(2).toString(),"J of diamonds","Add and Inspect Third Card");
-      results += expectedResult(pokerHand.toString(),"( A of spades, Q of hearts, J of diamonds )","Hand.toString()");
-      results += expectedResult(pokerHand.playCard().toString(),"J of diamonds","playCard() return value");
-      results += expectedResult(pokerHand.toString(),"( A of spades, Q of hearts )",
-            "The test to see if a card is removed by Hand.playCard()");
-      results += expectedResult(pokerHand.getNumCards(),2,
-            "The test to see if Hand.numCards is decremented properly with Hand.playCard()");
-      pokerHand.resetHand();
-      results += expectedResult(pokerHand.inspectCard(pokerHand.MAX_CARDS).getErrorFlag(),true,"inspectCard on empty hand return");
-      results += expectedResult(pokerHand.toString(),"(  )","Hand.resetHand()");
-
-      String expectedToString = "( ";
-      for(int i = 0; i <= pokerHand.MAX_CARDS; i++)
+      //Deal all cards to players
+      while (deck.getTopCard() > 0)
       {
-         /*
-          * Create between two and five explicit Card objects 
-          * and one Hand object. Use takeCard() on these few 
-          * cards (resulting in many, unavoidable "duplicates" 
-          * in the hand)  in a loop to populate the hand until 
-          * the maximum allowable cards is met (use this 
-          * criterion to end the loop). 
-          */
-         Card[] testCards = {new Card('A', Card.Suit.spades), new Card('Q',Card.Suit.hearts), new Card('J',Card.Suit.diamonds), new Card('T',Card.Suit.clubs)};
-         int roll = (int) (Math.random()*testCards.length);
-         boolean cardWasAdded = pokerHand.takeCard(testCards[roll]);
-         if(i < pokerHand.MAX_CARDS)
+         for (Hand hand : hands)
          {
-
-            expectedToString += testCards[roll].toString();
-            if(i+1 < pokerHand.MAX_CARDS)
+            //Make sure there is still a card to deal
+            if (deck.getTopCard() > 0)
             {
-               expectedToString += ", ";
+               hand.takeCard(deck.dealCard());
             }
-            //At some point in your program, test inspectCard() with both legal and illegal int arguments.
-            results += expectedResult(pokerHand.inspectCard(i).getValue(),testCards[roll].getValue(),"inspect card (" + pokerHand.inspectCard(i).getValue() + ")");
          }
-         else
-         {
-            results += expectedResult(cardWasAdded,false,"Test to see if Hand cuts off after numCards exceeds MAX_CARDS");
-
-            expectedToString += " )";
-            //At some point in your program, test inspectCard() with both legal and illegal int arguments.
-            results += expectedResult(pokerHand.inspectCard(i).getErrorFlag(),true,"inspect card invalid");
-         }
-      }
-      results += expectedResult(pokerHand.getNumCards(),pokerHand.MAX_CARDS,"Completely filled hand");
-      results += expectedResult(pokerHand.toString(),expectedToString,
-            "Hand.toString when attempting to added more than MAX_CARDS to hand");
-      //Display the hand using toString()
-      System.out.println(pokerHand);
-      // Next,  play each card in a loop, until the hand is empty.  
-      for(int i = 0; i < pokerHand.MAX_CARDS; i++)
-      {
-         //Display the card played as it is played,
-         System.out.println(pokerHand.playCard());
-      }
-      // and finally, display the (now empty)  hand
-      System.out.println(pokerHand);
-      results += expectedResult(pokerHand.toString(),"(  )","empty hand .toString() after play");
-      if(results.indexOf("false") < 0)
-      {
-         System.out.println("\n------------\nThe Hand class has passed all tests!\n------------\n");
-      }
-      else
-      {
-         System.out.println("\n------------\nFAILED! The Hand class has failed one or more tests!\n------------\n");
       }
 
-   }
+      //Display all hands
+      System.out.println("Here are our hands, from unshuffled deck:");
+      for(Hand hand : hands)
+      {
+         System.out.println(hand);
+      }
 
-   public static boolean expectedResult(boolean result, boolean expectation, String functionName)
-   {
-      try
+      //Reset all hands
+      for (Hand hand : hands)
       {
-         if(result == expectation)
-         {
-            System.out.println(functionName + " has passed.");
-            return true;
-         }
-         else
-         {
-            System.out.println(functionName + " has failed! Expected "
-                  + expectation + " and received " + result + ".");
-            return false;
-         }
+         hand.resetHand();
       }
-      catch (Exception e){
-         System.out.println(functionName + " has crashed!\n" + e.getMessage());
-         return false;
-      }
-   }
-   public static boolean expectedResult(String result, String expectation, String functionName)
-   {
-      try
+
+      //Put 52 cards back into deck object
+      deck.init(1);
+
+      //Shuffle deck
+      deck.shuffle();
+
+      //Deal all cards to players
+      while (deck.getTopCard() > 0)
       {
-         if(result.equals(expectation))
+         for (Hand hand : hands)
          {
-            System.out.println(functionName + " has passed.");
-            return true;
-         }
-         else
-         {
-            System.out.println(functionName + " has failed! Expected "
-                  + expectation + " and received " + result + ".");
-            return false;
+            //Make sure there is still a card to deal
+            if (deck.getTopCard() > 0)
+            {
+               hand.takeCard(deck.dealCard());
+            }
          }
       }
-      catch (Exception e){
-         System.out.println(functionName + " has crashed!\n" + e.getMessage());
-         return false;
-      }
-   }
-   public static boolean expectedResult(int result, int expectation, String functionName)
-   {
-      try
+
+      //Display all hands
+      System.out.println("Here are our hands, from SHUFFLED deck:");
+      for(Hand hand : hands)
       {
-         if(result == expectation)
-         {
-            System.out.println(functionName + " has passed.");
-            return true;
-         }
-         else
-         {
-            System.out.println(functionName + " has failed! Expected "
-                  + expectation + " and received " + result + ".");
-            return false;
-         }
+         System.out.println(hand);
       }
-      catch (Exception e){
-         System.out.println(functionName + " has crashed!\n" + e.getMessage());
-         return false;
-      }
-   }
-   public static boolean expectedResult(char result, char expectation, String functionName)
-   {
-      try
-      {
-         if(result == expectation)
-         {
-            System.out.println(functionName + " has passed.");
-            return true;
-         }
-         else
-         {
-            System.out.println(functionName + " has failed! Expected "
-                  + expectation + " and received " + result + ".");
-            return false;
-         }
-      }
-      catch (Exception e){
-         System.out.println(functionName + " has crashed!\n" + e.getMessage());
-         return false;
-      }
+      //Close Scanner input
+      input.close();
    }
 
 }
@@ -231,8 +103,12 @@ public class Assig3
 class Card
 {
    //Enumerator for the card's suit
-   public enum Suit { clubs, diamonds, hearts, spades };
+   public enum Suit
+   {
+      clubs, diamonds, hearts, spades
+   };
 
+   //Private instance variables
    private char value;
    private Suit suit;
    private boolean errorFlag;
@@ -250,14 +126,16 @@ class Card
       set(value, suit);
    }
 
-   //Parameterized constructor for card that accepts value, suit, and errorFlag
+   //Parameterized constructor for card that accepts value, suit,
+   //and errorFlag
    public Card(char value, Suit suit, boolean errorFlag)
    {
       set(value, suit);
       this.errorFlag = errorFlag;
    }
 
-   //If error flag is false, returns value and suit of card in a single string, otherwise returns invalid
+   //If error flag is false, returns value and suit of card in a single
+   //string, otherwise returns invalid
    public String toString()
    {
       if (errorFlag == false)
@@ -287,6 +165,7 @@ class Card
       }
    }
 
+   //Accessor for card suit
    public Suit getSuit()
    {
       return this.suit;
@@ -308,39 +187,47 @@ class Card
       return this.errorFlag;
    }
 
-
    private boolean isValid(char value, Suit suit)
    {
       /*
-       * a private helper method that returns true or false, 
-       * depending on the legality of the parameters.  
-       * Note that, although it may be impossible for 
-       * suit to be illegal (due to its enum-ness), we pass it, 
-       * anyway, in anticipation of possible changes to the type 
-       * from enum to, say, char or int, someday.  We only need to 
-       * test value, at this time.
+       * a private helper method that returns true or false, depending on the
+       * legality of the parameters. Note that, although it may be impossible
+       * for suit to be illegal (due to its enum-ness), we pass it, anyway, in
+       * anticipation of possible changes to the type from enum to, say, char
+       * or int, someday. We only need to test value, at this time.
        */
-      char[] cardType = {'A', '2', '3', '4', '5', '6', '7', 
-            '8', '9', 'T', 'J', 'Q', 'K'};
+      char[] cardType = { 'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K' };
       for (int i = 0; i < cardType.length; i++)
+      {
          if (value == cardType[i])
+         {
             return true;
+         }
+      }
 
       return false;
    }
 
+   //method that returns true if all members are equal, false otherwise
    public boolean equals(Card card)
    {
       if (card == this)
+      {
          return true;
-      return false;
+      }
+      else
+      {
+         return (card.getValue() == this.getValue()) &&
+               (card.getSuit().equals(this.getSuit())) &&
+               (card.getErrorFlag() == this.getErrorFlag());
+      }
    }
 }
 
 class Hand
 {
-
-   public final int MAX_CARDS = 50;
+   //Safeguard to prevent a runaway program from creating a monster array
+   public final static int MAX_CARDS = 50;
 
    private Card[] myCards;
    private int numCards;
@@ -370,19 +257,17 @@ class Hand
    public boolean takeCard(Card card)
    {
       /*
-       * adds a card to the next available position 
-       * in the myCards array.  This is an object copy, 
-       * not a reference copy, since the source of 
-       * the Card might destroy or change its data 
-       * after our Hand gets it -- we want our local 
-       * data to be exactly as it was when we received it.
+       * adds a card to the next available position in the myCards array. This
+       * is an object copy, not a reference copy, since the source of the Card
+       * might destroy or change its data after our Hand gets it -- we want
+       * our local data to be exactly as it was when we received it.
        */
 
       //Make sure we're not above our hand size limit.
-      if(numCards < MAX_CARDS)
+      if (numCards < MAX_CARDS)
       {
          //Create a copy of the taken card and advance the card counter.
-         myCards[numCards++] = new Card(card.getValue(),card.getSuit());
+         myCards[numCards++] = new Card(card.getValue(), card.getSuit());
 
          return true;
       }
@@ -395,40 +280,40 @@ class Hand
    public Card playCard()
    {
       /*
-       * returns and removes the card in the top occupied position of the array.
+       * returns and removes the card in the top occupied position of the
+       * array.
        */
       if (numCards > 0)
       {
          //Make a copy of the card in the myCards array.
-         Card playedCard = new Card(myCards[numCards - 1].getValue(),myCards[numCards - 1].getSuit());
+         Card playedCard = new Card(myCards[numCards - 1].getValue(), myCards[numCards - 1].getSuit());
 
-         //Decrement card counter. Remove the topmost card from the array. 
+         //Decrement card counter. Remove the topmost card from the array.
          myCards[--numCards] = null;
 
          return playedCard;
       }
       else
       {
-         //returns an invalid card to be consistent with inspectCard()
-         return new Card('#',Card.Suit.clubs);
+         //Returns an invalid card to be consistent with inspectCard()
+         return new Card('Q', Card.Suit.hearts, true);
       }
-
    }
 
    public String toString()
    {
       /*
-       * a stringizer that the client can 
-       * use prior to displaying the entire hand.
+       * a stringizer that the client can use prior to displaying the entire
+       * hand
        */
       String output = "( ";
-      for(int i = 0; i < numCards; i++)
+      for (int i = 0; i < numCards; i++)
       {
          //print the card.
          output += this.myCards[i].toString();
 
          //add a comma to every card except the last.
-         if(i + 1 < numCards)
+         if (i + 1 < numCards)
          {
             output += ", ";
          }
@@ -448,23 +333,24 @@ class Hand
    public Card inspectCard(int k)
    {
       /*
-       * Accessor for an individual card.  
-       * Returns a card with errorFlag = true if k is bad.
+       * Accessor for an individual card. Returns a card with errorFlag = true
+       * if k is bad.
        * 
-       *  Valid k: 0 <= k < numCards
+       * Valid k: 0 <= k < numCards
        */
 
-      //Returns card if k is valid
+
+      // Returns card if k is valid
       if (0 <= k && k < numCards)
       {
-         return myCards[k];
+         return new Card(myCards[k].getValue(),myCards[k].getSuit(),myCards[k].getErrorFlag());
       }
       else
       {
-         //Returns invalid card if k is bad
-         return new Card('#',Card.Suit.clubs);
+         // Returns invalid card if k is bad
+         return new Card('Q', Card.Suit.hearts, true);
       }
-   } 
+   }
 }
 
 class Deck
@@ -472,7 +358,8 @@ class Deck
    //Sets maximum number of cards to be played which is 6 decks (6 * 52 = 312)
    public final static int MAX_CARDS = 312;
 
-   //This is a private static Card array containing exactly 52 card references, which point to all the standard cards
+   //This is a private static Card array containing exactly 52 card
+   //references, which point to all the standard cards
    //Avoids repeatedly declaring the same 52 cards as game play continues
    private static Card[] masterPack;
 
@@ -484,46 +371,74 @@ class Deck
 
    private Card[] cards;
    private int topCard;
-   private int numPacks;
+   private int numPacks = 1;
 
    public Deck(int numPacks)
    {
-      /*
-       * a constructor that populates the arrays 
-       * and assigns initial values to members.  
-       * Overload so that if no parameters are 
-       * passed, 1 pack is assumed.
-       */
+      //Over loaded deck method so a user can request the number of decks to
+      //use.
+      init(numPacks);
    }
 
-   public Deck() {
-      allocateMasterPack();
+   public Deck()
+   {
+      //Calls init to build a deck
+      numPacks = 1;
+      init(numPacks);
    }
 
    public void init(int numPacks)
    {
-      /*
-       * re-populate cards[] with the standard 52 × numPacks 
-       * cards.  We should not repopulate the static 
-       * array, masterPack[], since that was done once, 
-       * in the (first-invoked) constructor and  never changes.
-       */
+      //Ensures the deck is not more than the maximum size.
+      if (numPacks > 6)
+      {
+         numPacks = 6;
+      }
+      //Initializes the pointer and cards array based on the requested number
+      //of packs.
+      topCard = numPacks * 52;
+      cards = new Card[topCard];
+      //Calls allocateMasterPack to make sure the master pack has been
+      //created.
+      allocateMasterPack();
+      //Uses arraycopy to copy the number of requested packs from masterPack
+      //into cards.
+      for (int count = 0; numPacks > count; count++)
+      {
+         System.arraycopy(masterPack, 0, cards, 52 * count, 52);
+      }
    }
 
    public void shuffle()
    {
-      /*
-       * mixes up the cards with the help of the standard random number generator.
-       */
+      int randomNumber;
+      Card copy;
+      Random generator = new Random();
+      //Applies the Fisher-Yates shuffle algorithm to the cards array.
+      for (int deckCount = topCard - 1; deckCount > 0; deckCount--)
+      {
+         randomNumber = generator.nextInt(deckCount + 1);
+         copy = cards[randomNumber];
+         cards[randomNumber] = cards[deckCount];
+         cards[deckCount] = copy;
+      }
    }
 
    public Card dealCard()
    {
-      /*
-       * returns and removes the card 
-       * in the top occupied position of cards[].
-       */
-      return null;
+      if(topCard < 0 || topCard > numPacks*52)
+      {
+         return new Card('Q', Card.Suit.hearts, true);
+      }
+      else
+      {
+         //Removes the top card from the deck before reducing top card.
+         Card card = cards[topCard - 1];
+         cards[topCard - 1] = null;
+         topCard--;
+         //The top card is returned 
+         return card;
+      }
    }
 
    //Accessor to return array index of top card
@@ -536,20 +451,22 @@ class Deck
    //Method to test that the index of the card is legal
    public Card inspectCard(int k)
    {
-      if(k >= 0 && k <= topCard)
+
+      if (k >= 0 && k <= topCard)
       {
-         return cards[k];
+         return new Card(cards[k].getValue(),cards[k].getSuit(),cards[k].getErrorFlag());
       }
       else
       {
          return new Card('Q', Card.Suit.hearts, true);
-      } 
+      }
    }
 
-   private static void allocateMasterPack() 
+   private static void allocateMasterPack()
    {
-      //Check if master pack has already been created by previous deck objects
-      if (!masterPackCreated) 
+      //Check if master pack has already been created by previous deck
+      //objects
+      if (!masterPackCreated)
       {
          //initialize card array
          masterPack = new Card[52];
@@ -606,12 +523,144 @@ class Deck
          masterPack[49] = new Card('K', Card.Suit.diamonds);
          masterPack[50] = new Card('K', Card.Suit.hearts);
          masterPack[51] = new Card('K', Card.Suit.spades);
-         /*Set masterPackCreated to true now that master pack has been
-         created once*/
+         /*
+          * Set masterPackCreated to true now that master pack has been
+          * created once
+          */
          masterPackCreated = true;
       }
    }
-
-
 }
 
+/***************************OUTPUT 1 ~ Using 1 Deck*****************************************
+How many hands? (1 - 10, please)
+5
+Here are our hands, from unshuffled deck:
+( K of spades, Q of hearts, J of diamonds, T of clubs, 8 of spades, 7 of hearts, 6 of diamonds, 5 of clubs,
+3 of spades, 2 of hearts, A of diamonds )
+( K of hearts, Q of diamonds, J of clubs, 9 of spades, 8 of hearts, 7 of diamonds, 6 of clubs, 4 of spades,
+3 of hearts, 2 of diamonds, A of clubs )
+( K of diamonds, Q of clubs, T of spades, 9 of hearts, 8 of diamonds, 7 of clubs, 5 of spades, 4 of hearts,
+3 of diamonds, 2 of clubs )
+( K of clubs, J of spades, T of hearts, 9 of diamonds, 8 of clubs, 6 of spades, 5 of hearts, 4 of diamonds,
+3 of clubs, A of spades )
+( Q of spades, J of hearts, T of diamonds, 9 of clubs, 7 of spades, 6 of hearts, 5 of diamonds, 4 of clubs,
+2 of spades, A of hearts )
+Here are our hands, from SHUFFLED deck:
+( 2 of diamonds, 5 of hearts, 2 of hearts, 4 of spades, 5 of clubs, 8 of clubs, Q of spades, 7 of hearts, 7 of spades,
+J of clubs, 5 of diamonds )
+( 2 of spades, T of diamonds, K of diamonds, 8 of diamonds, K of spades, 8 of spades, T of spades, 2 of clubs,
+A of diamonds, T of clubs, Q of clubs )
+( J of hearts, Q of hearts, 4 of hearts, 5 of spades, 4 of diamonds, K of hearts, Q of diamonds, 7 of diamonds,
+6 of clubs, J of spades )
+( 9 of spades, 6 of spades, 3 of hearts, 6 of diamonds, J of diamonds, 3 of clubs, 6 of hearts, 9 of hearts,
+8 of hearts, A of clubs )
+( T of hearts, 3 of diamonds, 9 of clubs, 7 of clubs, 9 of diamonds, 3 of spades, A of hearts, K of clubs, 4 of clubs,
+A of spades )
+ ****************************************************************************/
+
+/***************************OUTPUT 2 ~ Using 1 Deck**************************
+How many hands? (1 - 10, please)
+0
+Please enter a legal value of players between 1 and 10
+20
+Please enter a legal value of players between 1 and 10
+8
+Here are our hands, from unshuffled deck:
+( K of spades, J of spades, 9 of spades, 7 of spades, 5 of spades, 3 of spades, A of spades )
+( K of hearts, J of hearts, 9 of hearts, 7 of hearts, 5 of hearts, 3 of hearts, A of hearts )
+( K of diamonds, J of diamonds, 9 of diamonds, 7 of diamonds, 5 of diamonds, 3 of diamonds, A of diamonds )
+( K of clubs, J of clubs, 9 of clubs, 7 of clubs, 5 of clubs, 3 of clubs, A of clubs )
+( Q of spades, T of spades, 8 of spades, 6 of spades, 4 of spades, 2 of spades )
+( Q of hearts, T of hearts, 8 of hearts, 6 of hearts, 4 of hearts, 2 of hearts )
+( Q of diamonds, T of diamonds, 8 of diamonds, 6 of diamonds, 4 of diamonds, 2 of diamonds )
+( Q of clubs, T of clubs, 8 of clubs, 6 of clubs, 4 of clubs, 2 of clubs )
+Here are our hands, from SHUFFLED deck:
+( J of diamonds, A of clubs, 3 of spades, 3 of diamonds, 2 of diamonds, K of spades, 8 of spades )
+( 4 of diamonds, 9 of hearts, 5 of spades, 7 of spades, T of hearts, 6 of spades, Q of spades )
+( 2 of hearts, J of spades, K of hearts, 9 of diamonds, J of hearts, T of clubs, 9 of clubs )
+( 3 of hearts, 7 of hearts, J of clubs, 8 of clubs, 5 of clubs, K of diamonds, Q of hearts )
+( Q of clubs, 4 of spades, 4 of clubs, 8 of hearts, 6 of clubs, A of hearts )
+( T of diamonds, 7 of clubs, 6 of diamonds, 7 of diamonds, 9 of spades, Q of diamonds )
+( 4 of hearts, 3 of clubs, A of spades, T of spades, 5 of hearts, A of diamonds )
+( 6 of hearts, 2 of spades, 8 of diamonds, 2 of clubs, 5 of diamonds, K of clubs )
+ ****************************************************************************/
+
+/***************************OUTPUT 3 ~ Using 2 Decks*************************
+How many hands? (1 - 10, please)
+4
+Here are our hands, from unshuffled deck:
+( K of spades, Q of spades, J of spades, T of spades, 9 of spades, 8 of spades, 7 of spades, 6 of spades, 5 of spades,
+4 of spades, 3 of spades, 2 of spades, A of spades, K of spades, Q of spades, J of spades, T of spades, 9 of spades,
+8 of spades, 7 of spades, 6 of spades, 5 of spades, 4 of spades, 3 of spades, 2 of spades, A of spades )
+( K of hearts, Q of hearts, J of hearts, T of hearts, 9 of hearts, 8 of hearts, 7 of hearts, 6 of hearts, 5 of hearts,
+4 of hearts, 3 of hearts, 2 of hearts, A of hearts, K of hearts, Q of hearts, J of hearts, T of hearts, 9 of hearts,
+8 of hearts, 7 of hearts, 6 of hearts, 5 of hearts, 4 of hearts, 3 of hearts, 2 of hearts, A of hearts )
+( K of diamonds, Q of diamonds, J of diamonds, T of diamonds, 9 of diamonds, 8 of diamonds, 7 of diamonds,
+6 of diamonds, 5 of diamonds, 4 of diamonds, 3 of diamonds, 2 of diamonds, A of diamonds, K of diamonds, Q of diamonds,
+J of diamonds, T of diamonds, 9 of diamonds, 8 of diamonds, 7 of diamonds, 6 of diamonds, 5 of diamonds, 4 of diamonds,
+3 of diamonds, 2 of diamonds, A of diamonds )
+( K of clubs, Q of clubs, J of clubs, T of clubs, 9 of clubs, 8 of clubs, 7 of clubs, 6 of clubs, 5 of clubs,
+4 of clubs, 3 of clubs, 2 of clubs, A of clubs, K of clubs, Q of clubs, J of clubs, T of clubs, 9 of clubs, 8 of clubs,
+7 of clubs, 6 of clubs, 5 of clubs, 4 of clubs, 3 of clubs, 2 of clubs, A of clubs )
+Here are our hands, from SHUFFLED deck:
+( 4 of clubs, K of hearts, 7 of hearts, 6 of clubs, 8 of diamonds, 3 of spades, A of diamonds, 2 of diamonds,
+T of spades, K of hearts, 3 of hearts, 6 of spades, 6 of hearts, A of diamonds, 8 of clubs, Q of hearts, 9 of diamonds,
+2 of clubs, T of clubs, A of clubs, 6 of clubs, 8 of hearts, 4 of hearts, 9 of diamonds, 9 of hearts, 5 of spades )
+( 9 of clubs, 4 of spades, 5 of clubs, 7 of hearts, 5 of diamonds, 2 of diamonds, 4 of spades, J of clubs, J of spades,
+7 of spades, T of diamonds, 5 of diamonds, J of hearts, 4 of diamonds, T of hearts, J of clubs, 3 of hearts,
+9 of spades, Q of diamonds, K of diamonds, 7 of clubs, 4 of hearts, 2 of spades, K of spades, 8 of spades,
+7 of diamonds )
+( 4 of diamonds, T of clubs, 7 of spades, 7 of clubs, 3 of diamonds, K of clubs, A of spades, 6 of diamonds,
+9 of spades, 2 of hearts, Q of spades, A of spades, Q of spades, 2 of hearts, 5 of spades, A of hearts, Q of clubs,
+3 of diamonds, Q of hearts, 8 of diamonds, 5 of clubs, 5 of hearts, T of hearts, 4 of clubs, K of spades, 9 of hearts )
+( 3 of spades, 2 of clubs, J of hearts, 6 of hearts, 5 of hearts, 3 of clubs, 6 of spades, K of diamonds,
+6 of diamonds, T of spades, J of spades, 7 of diamonds, 8 of spades, 8 of hearts, A of clubs, Q of clubs, 8 of clubs,
+2 of spades, 9 of clubs, Q of diamonds, J of diamonds, T of diamonds, 3 of clubs, K of clubs, A of hearts,
+J of diamonds )
+ ****************************************************************************/
+
+/***************************OUTPUT 4 ~ Using 2 Decks*************************
+How many hands? (1 - 10, please)
+-4
+Please enter a legal value of players between 1 and 10
+10000
+Please enter a legal value of players between 1 and 10
+0
+Please enter a legal value of players between 1 and 10
+8
+Here are our hands, from unshuffled deck:
+( K of spades, J of spades, 9 of spades, 7 of spades, 5 of spades, 3 of spades, A of spades, Q of spades, T of spades,
+8 of spades, 6 of spades, 4 of spades, 2 of spades )
+( K of hearts, J of hearts, 9 of hearts, 7 of hearts, 5 of hearts, 3 of hearts, A of hearts, Q of hearts, T of hearts,
+8 of hearts, 6 of hearts, 4 of hearts, 2 of hearts )
+( K of diamonds, J of diamonds, 9 of diamonds, 7 of diamonds, 5 of diamonds, 3 of diamonds, A of diamonds,
+Q of diamonds, T of diamonds, 8 of diamonds, 6 of diamonds, 4 of diamonds, 2 of diamonds )
+( K of clubs, J of clubs, 9 of clubs, 7 of clubs, 5 of clubs, 3 of clubs, A of clubs, Q of clubs, T of clubs,
+8 of clubs, 6 of clubs, 4 of clubs, 2 of clubs )
+( Q of spades, T of spades, 8 of spades, 6 of spades, 4 of spades, 2 of spades, K of spades, J of spades, 9 of spades,
+7 of spades, 5 of spades, 3 of spades, A of spades )
+( Q of hearts, T of hearts, 8 of hearts, 6 of hearts, 4 of hearts, 2 of hearts, K of hearts, J of hearts, 9 of hearts,
+7 of hearts, 5 of hearts, 3 of hearts, A of hearts )
+( Q of diamonds, T of diamonds, 8 of diamonds, 6 of diamonds, 4 of diamonds, 2 of diamonds, K of diamonds,
+J of diamonds, 9 of diamonds, 7 of diamonds, 5 of diamonds, 3 of diamonds, A of diamonds )
+( Q of clubs, T of clubs, 8 of clubs, 6 of clubs, 4 of clubs, 2 of clubs, K of clubs, J of clubs, 9 of clubs,
+7 of clubs, 5 of clubs, 3 of clubs, A of clubs )
+Here are our hands, from SHUFFLED deck:
+( T of clubs, K of diamonds, 4 of diamonds, 4 of hearts, T of diamonds, J of hearts, 8 of hearts, A of clubs,
+A of diamonds, A of spades, 7 of clubs, J of diamonds, 7 of clubs )
+( 6 of clubs, 3 of clubs, 9 of spades, 3 of hearts, 5 of diamonds, 8 of hearts, J of diamonds, 8 of spades,
+A of spades, 7 of hearts, J of clubs, Q of clubs, 6 of hearts )
+( 3 of spades, 5 of hearts, 8 of clubs, 7 of hearts, 9 of hearts, 2 of spades, 5 of spades, K of spades,
+8 of diamonds, T of spades, 9 of clubs, 3 of spades, 9 of spades )
+( Q of diamonds, Q of spades, 8 of clubs, 4 of clubs, K of spades, K of clubs, J of spades, 4 of clubs, A of hearts,
+A of hearts, Q of diamonds, J of spades, 2 of clubs )
+( 2 of hearts, J of clubs, J of hearts, 4 of spades, 6 of diamonds, K of diamonds, T of clubs, 2 of diamonds,
+T of hearts, 5 of clubs, 4 of diamonds, 3 of clubs, Q of clubs )
+( 8 of spades, 2 of clubs, 3 of hearts, 9 of diamonds, 2 of hearts, 9 of hearts, 7 of diamonds, K of clubs,
+Q of hearts, 8 of diamonds, 9 of clubs, T of diamonds, 7 of spades )
+( 4 of hearts, 9 of diamonds, 6 of clubs, T of spades, 2 of spades, K of hearts, 5 of diamonds, 6 of diamonds,
+6 of hearts, K of hearts, Q of hearts, 2 of diamonds, A of diamonds )
+( 7 of diamonds, 5 of hearts, 7 of spades, 3 of diamonds, 6 of spades, 4 of spades, T of hearts, 5 of clubs,
+3 of diamonds, 6 of spades, A of clubs, Q of spades, 5 of spades )
+ ****************************************************************************/
